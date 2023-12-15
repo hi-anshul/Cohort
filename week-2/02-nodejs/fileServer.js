@@ -16,6 +16,29 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const app = express();
+const port = 3000
+
+app.get('/', (req, res) => {
+  fs.readdir(path.join(__dirname,'./files/'), (err,files)=>{
+    if (err) {
+      return res.status(500).send('Error reading directory');
+    }
+    res.send(files);
+  })
+})
+
+app.get('/file/:filename', (req, res) => {
+  
+  const filePath = path.join(__dirname,'./files/',req.params.filename)
+
+  fs.readFile(filePath,'utf-8',(err,data)=>{
+    if(err) throw err
+    res.send(data);
+  })
+})
 
 
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});
 module.exports = app;

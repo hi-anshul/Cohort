@@ -39,11 +39,114 @@
 
   Testing the server - run `npm run test-todoServer` command in terminal
  */
-  const express = require('express');
-  const bodyParser = require('body-parser');
-  
-  const app = express();
-  
-  app.use(bodyParser.json());
-  
-  module.exports = app;
+const express = require("express");
+const bodyParser = require("body-parser");
+const app = express();
+const port = 3000;
+const fs = require("fs");
+app.use(bodyParser.json());
+const fileName = "todos.json";
+
+function findToDo(arr, index) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].id === index) return i;
+  }
+  return -1;
+}
+
+app.get("/todos", (req, res) => {
+  fs.readFile(fileName, "utf-8", (err, data) => {
+    if (err) {
+      console.log("Error in reading File");
+    }
+    res.send(JSON.parse(data));
+  });
+});
+
+app.post("/todos", (req, res) => {
+  const newTodo = {
+    id: Math.floor(Math.random() * 978123 + 1),
+    title: req.body.title,
+    description: req.body.description,
+  };
+  fs.readFile(fileName, "utf-8", (err, data) => {
+    if (err) {
+      console.log("Error in reading File");
+    }
+    const dataToArray = JSON.parse(data); //Convert the JSON into Array
+    dataToArray.push(newTodo); //Pushing to Array
+    const arrayToData = JSON.stringify(dataToArray);
+    fs.writeFile(fileName, arrayToData, (err) => {
+      if (err) {
+        throw err;
+      }
+      res.status(201).json(newTodo);
+    });
+  });
+});
+
+app.post("/todos/:id", (req, res) => {
+  fs.readFile(fileName, "utf-8", (err, data) => {
+    if (err) throw err;
+    const toDos = JSON.parse(data); //convert JSON to array
+    const indexToDo = findToDo(toDos,parseInt(req.params.id)); //Finding if the index is present
+    if (indexToDo===-1) {
+      res.status(404).send();
+    }else {
+      res.json(toDos[indexToDo]);
+    }
+  });
+});
+
+
+app.delete("/todos/:id", (req, res) => {
+  fs.readFile(fileName, "utf-8", (err, data) => {
+    if (err) throw err;
+    const toDos = JSON.parse(data);
+    const indexToDo = findToDo(toDos,parseInt(req.params.id));
+    if (indexToDo===-1) {
+      res.status(404).send();
+    }else {
+      toDos.splice(indexToDo,1); //Deleting the array
+      fs.writeFile(fileName,JSON.stringify(toDos), (err)=>{
+        if (err) throw err;
+        res.status(200).send();
+      })
+    }
+  });
+});
+
+
+app.put("/todos:id", (req, res) => {
+  fs.readFile(fileName, "utf-8", (err, data) => {
+    if (err) {
+      console.log("Error in reading File");
+    }
+    const toDos = JSON.parse(data);
+    const indexToDo = findToDo(toDos,parseInt(req.params.id));
+    if (indexToDo===-1) {
+      res.status(404).send();
+    }else {
+      const updatedTodo = {
+        id:toDos[indexToDo].id,
+        title:req.body.title,
+        description:req.body.description
+      }
+      todos[indexToDo]=updatedTodo
+      fs.writeFile(fileName,JSON.stringify(toDos), (err)=>{
+        if (err) throw err;
+        res.status(200).send(updatedTodo);
+      })
+    }
+  });
+});
+
+app.use((req, res, next) => {
+  res.status(404).send();
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
+
+module.exports = app;
