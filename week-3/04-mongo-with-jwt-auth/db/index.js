@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // Connect to MongoDB
-mongoose.connect('your-mongodb-url');
+mongoose.connect('mongodb+srv://youcancodeanything:HmzrJ3rCK0aOvdey@cluster0.drp7kdn.mongodb.net/coursera');
 
 const AdminSchema = new mongoose.Schema({
     username: String,
