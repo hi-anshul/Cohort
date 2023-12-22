@@ -42,7 +42,9 @@ router.post("/courses", authenticateJWT, (req, res) => {
 });
 
 router.get("/courses", authenticateJWT, (req, res) => {
-  // Implement fetching all courses logic
+  Course.find().then((courses) => {
+    res.json(courses);
+  });
 });
 
 module.exports = router;
