@@ -4,7 +4,7 @@ const { Admin,Course } = require("../db");
 const router = Router();
 
 // Admin Routes
-app.post('/signup', async (req, res) => {
+router.post('/signup', async (req, res) => {
     const username = req.body.username
     const password = req.body.password
 
@@ -19,21 +19,20 @@ app.post('/signup', async (req, res) => {
     })
     res.json({
         "msg":"User Created successfully"
-    })
-
-    
+    })  
 });
 
-app.post('/courses', adminMiddleware, (req, res) => {
+router.post('/courses', adminMiddleware, (req, res) => {
     Course.create({
         title: req.body.title,
         description: req.body.description,
         price: req.body.price,
-        image: req.body.image
+        image: req.body.image,
+        courseId: req.body.courseId
     })
 });
 
-app.get('/courses', adminMiddleware, (req, res) => {
+router.get('/courses', adminMiddleware, (req, res) => {
     Course.find().then((courses)=>{
         res.json(courses)
     })

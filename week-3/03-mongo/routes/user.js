@@ -4,7 +4,7 @@ const userMiddleware = require("../middleware/user");
 const { Course, Transaction } = require("../db");
 
 // User Routes
-app.post("/signup", async (req, res) => {
+router.post("/signup", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
@@ -22,13 +22,13 @@ app.post("/signup", async (req, res) => {
   });
 });
 
-app.get("/courses", (req, res) => {
+router.get("/courses", (req, res) => {
   Course.find().then((courses) => {
     res.json(courses);
   });
 });
 
-app.post("/courses/:courseId", userMiddleware, async (req, res) => {
+router.post("/courses/:courseId", userMiddleware, async (req, res) => {
   const username = req.headers.username;
   const courseId = req.params.courseId;
   Course.find({ courseId }).then((result) => {
@@ -39,7 +39,7 @@ app.post("/courses/:courseId", userMiddleware, async (req, res) => {
   });
 });
 
-app.get("/purchasedCourses", userMiddleware, async(req, res) => {
+router.get("/purchasedCourses", userMiddleware, async(req, res) => {
   const username = req.headers.username;
   const purchasedCourse = await Transaction.find({ username })
   console.log(purchasedCourse)
