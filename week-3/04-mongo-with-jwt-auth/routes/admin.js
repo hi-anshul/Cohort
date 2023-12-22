@@ -3,8 +3,22 @@ const authenticateJWT = require("../middleware/authenticateJWT");
 const router = Router();
 
 // Admin Routes
-router.post("/signup", (req, res) => {
-  // Implement admin signup logic
+router.post("/signup", async (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+
+  const checkUser = await Admin.findOne({ username });
+
+  if (checkUser) {
+    res.status(404).send("User already exist");
+  }
+  Admin.create({
+    username: username,
+    password: password,
+  });
+  res.json({
+    msg: "User Created successfully",
+  });
 });
 
 router.post("/signin", (req, res) => {
@@ -37,8 +51,8 @@ router.post("/courses", authenticateJWT, (req, res) => {
     description: req.body.description,
     price: req.body.price,
     image: req.body.image,
-    courseId: req.body.courseId
-})
+    courseId: req.body.courseId,
+  });
 });
 
 router.get("/courses", authenticateJWT, (req, res) => {
