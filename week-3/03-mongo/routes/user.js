@@ -44,3 +44,5 @@ router.get("/purchasedCourses", userMiddleware, async(req, res) => {
   const purchasedCourse = await Transaction.find({ username })
   console.log(purchasedCourse)
 });
+
+module.exports = router

@@ -68,3 +68,5 @@ router.get("/purchasedCourses", authenticateJWT, async (req, res) => {
   const purchasedCourse = await Transaction.find({ username });
   console.log(purchasedCourse);
 });
+
+module.exports = router
